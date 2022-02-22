@@ -1,0 +1,79 @@
+Sobre rabbitMQ
+
+- message broker (é o cara que faz o meio de campo ou seja ele faz o meio entre o publisher e o consumer)
+
+- protocolos - AMQP,MQTT,STOMP E HTTP -- AMQP é o mais utilizado
+
+- desacoplamento entre serviços (quando vc usa o rabbit no seus microsevicos vc garante o desacoplamento entre eles pois o reabbitmq que vai fazer essa comunicao entre eles)
+
+ - Rapido e poderoso pois as msgs cai na memoria da maquina
+
+
+ por baixo dos panos
+
+ tenho client e o server e essa comunicao acontece via TCP ( a primeira conexao é sempre mais lenta )
+ ja no rabbit ele abre 1 conexao no serve, n importa  qt de consumidores e dentro dessa conexao nos criamos subconexoes que chamamos de channel
+
+
+ funcionamento basico
+
+ - tenho o publisher(o cara que publica) e o consumer(o cara que le) ai no meio dessa historia eu tenho a QUEUE onde o publisher envia a msg para a QUEUE e não para o consumidor direto
+
+ - PORÉM o publisher não publica a msg direto na QUEUE pq muitas vezes essa msg pode ser entrega a diversas filas então o rabbitMQ utiliza o conceito de exchange
+ ou seja ela pega essa mensagem que o publisher publicou processa e descobre pra qual ou quais filas essa msg vai ter que ser enviada e manda para QUEUE
+
+
+tipos de exchange
+
+- DIRECT --> manda a msg especificamente para uma determinada fila
+- FANOUT --> quando ela recebe a msg ela distribui essa msg para todas as filas que estao relacionadas a essa exchange
+- TOPIC --> com esse tipo podemos colocar algumas regras e ela envia para uma determinada fila onde foi implementado a tal regras (parece com a direct)
+
+
+DIRECT exchange
+
+- tenho 1 produces e 3 consumers(sistemas,clientes) que estao interessados na msg do producer e eu tenho uma QUEUE pra cada consumer ou seja 3 QUEUES
+quando o producer mandar a msg pra exchange ela define pra qual das 3 filas essa msg é caminhada atraves do bind
+
+- rounting Key é uma key especifica que relaciona o exchange com uma QUEUE ou seja vou ter uma key X Y Z pra kada Queue então quando uma msg é produzida ela é CARIMBADA com um rounting key por exemplo: das 3 filas a fila 2
+é a fila com a key X então a minha msg vai ter a key x no corpo para o exchange saber a onde entregar essa msg
+
+FANOUT exchange
+
+- mesmo cenario vou ter 1 produces e 3 consumers
+- nesse caso n passo nenhuma routing key e essa mesma mensagem é replicada para todas as filas que estão penduradas na minha exchange
+
+TOPIC exchange
+
+- mesmo cenario vou ter 1 produces e 3 consumers
+- também usa rounting KEY mas além disso eles conseguem ter regras de regex nas keys
+
+QUEUES
+
+- FIFO --> FIRST IN, FIRS OUT ou seja a primeira a entrar é a primeira a sair
+
+- PROPRIEDADES:
+              Durable: Se ela deve ser salva mesmo depois do restart do broker pois caso a sua QUEUE n seja Durable quando o broker for reiniciado a fila vai ser removida
+              Auto-delete: Removida automaticamente quando o consumer se desconecta
+              Expiry: Define o tempo que nao ha mensagem ou clientes consumindo tal fila por exemplo --> se depois de 3hrs nenhum consumer consumir aquela fila ela é removida
+              Message TTL: Tempo de vida da mensagem ou seja se durante o tempo de vida dessa mensagem niguem consumir ela, ela é removida da fila
+              OverFlow: podemos colocar diversos padroes como:
+                        Drop Head (remove a ultima): por exemplo ou seja --> suponha que o total de mensagens é 10k e quando a minha fila chegar nesse limite ele vai remover a mais antiga para conseguir pegar a nova msg
+                        Reject Publish: quando o publicador nao consegue mais publicar nessa fila automaticamente ele recebe uma mensagem falando que nao foi possivel publicar a mensagem
+              Exclusive: Somente channel que criou pode acessar
+              Max length ou bytes(tem relacao com OverFlow): Quantidade de mensagem o tamanho em bytes máximo permitido e caso aconteca nos podemos escolher se queremos remover a mais antiga ou rejeitar a nova
+
+Dead letter QUEUES
+
+- Algumas mensagens nao conseguem ser entregues por algum motivo
+- sao encaminhadas para um exchange especifica que roteia as mensagens para um DLQ
+- Tais mensagens podem ser consumidas ou averiguadas posteriormente
+
+Lazy QUEUES
+
+- geralmente as mensagens ficam armazenadas em memoria e caso essa memoria exceda o seu limite (por conta de um alto fluxo) o lazy queue entra em ação armazenando essas menagens em disco para posteriormente algum consumidor consumir
+essa mensagen e caso o broker reinicie ou caia essas mensagens nao se percam
+- exige alto I/O pois disco 
+
+
+

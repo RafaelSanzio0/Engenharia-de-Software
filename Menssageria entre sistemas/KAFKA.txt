@@ -1,0 +1,59 @@
+CONCEITOS DE INTEGRAÇÃO DE SISTEMAS E MENSAGERIA
+
+FLUXO BASICO SOBRE O KAFKA
+
+BROKER
+Responsável por distruibir as mensagens para os sistemas, (aqui ja e outro assunto)cada sistema espera um tipo x de mensagem que nós
+podemos chamar de TOPICO.
+
+CLUSTER
+é um conjunto de brokers, no caso podemos ter inumeros broker rodando em paralelo, um exemplo disso
+seria termos por exemplo 3 brokers rodando para caso algum destes brokers caia, nós ainda teriamos outros 
+brokers escutando as mensagens evitando assim a perda de informações.
+
+ZOOKEEPER
+Onde fica armazenado algumas informações processadas pelo kafka
+
+CONSUMER
+Os consumidores Kafka são os assinantes responsáveis ​​pela leitura de registros de um ou mais tópicos e de
+uma ou mais partições de um tópico.
+
+DLQ
+Durante o processo se ocorrer algum problema a mensagem é jogada para DLQ  é como se fosse uma lixeira, é muito
+util para verificar o que aconteceu de errado com aquela mensagem não sendo nescessário ficar olhando 
+logs procurando pelo erro.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+PERGUNTAS RELACIONADAS AO CURSO DE ARQUITETURA DE SISTEMAS AVANÇADO
+
+QUAIS SÃO AS PRINCIPAIS VANTAGENS DE ARQUITETURA EM MESSAGERIA ASSINCRONA?
+Desaclopamento e Buffer de comunicação entre sistemas
+
+QUAL A MAIOR DESVANTAGEM DE CENTRALIZAR TODAS AS MENSAGENS EM UM UNICO MESSAGE BROKER?
+Ter dependência de um unico broker em todos os serviçõs(Single point of Failure) ou seja caso este broker falhe
+teremos problemas em todo os sistemas
+
+QUAL A VANTAGEM DE COMUNICAÇÃO ASSÍNCRONA?
+Um serviço "quebrado" não interfere no outros
+
+COMO LIDAR COM ERROS AO PROCESSAR UMA MENSAGEM DE FORMA ASSÍNCRONA?
+O consumidor que sofre o erro deve lidar com o erro(Dead Letter Queue - DLQ)
+
+DADO QUE O SERVIÇO A ESCREVA MENSAGENS QUE SÃO CONSUMIDAS PELO SERVIÇO B O QUE PRECISAR SER FEITO PARA 
+APOSENTAR O SERVIÇO A E COLOCAR O SERVIÇO C EM SEU LUGAR PARA CONTINUAR PRODUZINDO AS MENSAGENS PARA O SERVIÇO B?
+Desativar o serviço A e habilitar o serviço C para produzir mensagens na mesma fila que o serviço A
+
+O QUE DEFINE UMA ARQUITETURA EM MENSAGERIA?
+Serviços que produzem e consomem mensagens de uma message broker
+
+QUAL POSSIVEL PROBLEMA PODE SE TER COM ARQUITETURA EM MESAGERIA ASSINCRONA?
+Incosistencia de dados por não recebimento de mensagem
+
+COMO RASTREAR O FLUXO DE UMA ARQUITERUA DE MENSAGENS ASSINCRONAS?
+Usando um metadata nos logs e indexa-los em um unico lugar
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+METADADOS
+são dados sobre outros dados. Um item de um metadado pode dizer do que se trata aquele dado
